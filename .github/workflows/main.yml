@@ -9,15 +9,9 @@ jobs:
            with:
               bun-version: "latest"
 
-         - name: Extract branch name
-           shell: bash
-           run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-           id: extract_branch
-
          - run: bun install
          - run: bun test
          - name: Publish with Bun
            env:
-              BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
               NPM_CONFIG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           run: bun publish --tag $BRANCH_NAME --access restricted
+           run: bun publish --access restricted
