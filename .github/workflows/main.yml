@@ -14,7 +14,7 @@ jobs:
            run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
            id: extract_branch
 
-         - run: bun npm login
+         - run: bunx npm login
          - run: bun install
          - run: bun test
          - name: Publish with Bun
