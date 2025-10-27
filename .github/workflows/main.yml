@@ -14,4 +14,4 @@ jobs:
          - name: Publish with Bun
            env:
               NPM_CONFIG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           run: bun publish --access restricted
+           run: bun publish --access restricted --registry https://npm.pkg.github.com
