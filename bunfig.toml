@@ -1,2 +1,2 @@
 [publish]
-"@pohhnii" = "https://npm.pkg.github.com"
+"@pohhnii:registry" = "https://npm.pkg.github.com"
