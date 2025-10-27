@@ -20,4 +20,4 @@ jobs:
            env:
               BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
               NPM_CONFIG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           run: bun publish --tag $BRANCH_NAME --registry https://npm.pkg.github.com/ --scope @pohhnii --access restricted
+           run: bun publish --tag $BRANCH_NAME --access restricted
