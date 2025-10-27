@@ -3,6 +3,11 @@
   "version": "0.1-SNAPSHOT",
   "module": "index.ts",
   "type": "module",
+  "repository": "github:Pohhnii/snn-js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "restricted"
+  },
   "devDependencies": {
     "@types/bun": "^1.2.23"
   },
