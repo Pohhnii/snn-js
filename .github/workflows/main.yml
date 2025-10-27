@@ -13,10 +13,11 @@ jobs:
            shell: bash
            run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
            id: extract_branch
-           
+
          - run: bun install
          - run: bun test
          - name: Publish with Bun
            env:
               BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+              NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
            run: bun publish --tag $BRANCH_NAME
