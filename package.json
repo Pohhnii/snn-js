@@ -1,0 +1,15 @@
+{
+  "name": "snn-js",
+  "version": "0.1-SNAPSHOT",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.2.23"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "bundle": "bun build . --outdir dist"
+  }
+}
