@@ -17,7 +17,8 @@ export const Jobs = {
         return this.create((input) => converter.convert(input));
     },
 
-    forwardModel(): Job<Spike[], Model, Spike[]> {
+    forwardModel(model?: Model): Job<Spike[], Model, Spike[]> {
+        if (model) return this.create((input) => model.forwardAll(input));
         return this.create((input, model) => model.forwardAll(input));
     },
 };

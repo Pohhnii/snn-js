@@ -62,21 +62,22 @@ test("xor test", () => {
 
 test("xor test with pipeline", () => {
     const XOR_INPUTS = [
-        [0, 0],
-        [0, 1],
-        [1, 0],
-        [1, 1],
+        [false, false],
+        [false, true],
+        [true, false],
+        [true, true],
     ];
 
     const XOR_SHOULD_SPIKE = [false, true, true, false];
 
     const pipeline = new Pipeline([
+        Jobs.create((input: boolean[]) => input.map((x) => +x)),
         Jobs.convert(InputConverters.serialIndexedPosition()),
         Jobs.forwardModel(),
         Jobs.convert(OutputConverters.anySpike()),
     ]);
 
-    const modelParam = (model: Model) => PipelineParameters.create(1, model);
+    const modelParam = (model: Model) => PipelineParameters.create(2, model);
 
     const baseModel = new ModelBuilder(2)
         .dense(5)
@@ -94,7 +95,7 @@ test("xor test with pipeline", () => {
 
     const forwardPipeline = (
         individual: Individual<Model>,
-        input: number[],
+        input: boolean[],
     ) => {
         const model = individual.value;
         model.reset();
@@ -119,5 +120,68 @@ test("xor test with pipeline", () => {
             modelParam(fittest),
         ]);
         expect(hasSpiked).toEqual(XOR_SHOULD_SPIKE[i]!);
+    }
+});
+
+test("optimized xor test with pipeline", () => {
+    const XOR_INPUTS = [
+        [false, false],
+        [false, true],
+        [true, false],
+        [true, true],
+    ].map((xs) => xs.map((x) => +x)).map((xs) =>
+        InputConverters.serialIndexedPosition().convert(xs)
+    );
+
+    const XOR_SHOULD_SPIKE = [false, true, true, false];
+
+    const pipeline = new Pipeline([
+        Jobs.forwardModel(),
+        Jobs.convert(OutputConverters.anySpike()),
+    ]);
+
+    const modelParam = (model: Model) => PipelineParameters.create(0, model);
+
+    const baseModel = new ModelBuilder(2)
+        .dense(5)
+        .dense(1)
+        .build();
+
+    const epochs = 2000;
+    const populationSize = 25;
+
+    const generation = new Generation(
+        baseModel,
+        new MutationConfig(),
+        populationSize,
+    );
+
+    const forwardPipeline = (
+        individual: Individual<Model>,
+        input: Spike[],
+    ) => {
+        const model = individual.value;
+        model.reset();
+        return pipeline.execute(input, [modelParam(model)]);
+    };
+
+    for (let i = 0; i < epochs; i++) {
+        generation.validatePositiveHits(
+            XOR_INPUTS,
+            XOR_SHOULD_SPIKE,
+            forwardPipeline,
+        ).newGeneration();
+    }
+
+    const fittestIndividual = generation.fittest!;
+    expect(fittestIndividual.score).toBe(4);
+    const fittest = fittestIndividual.value;
+
+    for (let i = 0; i < XOR_INPUTS.length; i++) {
+        fittest.reset();
+        const hasSpiked = pipeline.execute(XOR_INPUTS[i]!, [
+            modelParam(fittest),
+        ]);
+        expect(hasSpiked).toBe(XOR_SHOULD_SPIKE[i]!);
     }
 });
